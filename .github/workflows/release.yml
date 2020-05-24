@@ -1,0 +1,41 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+          architecture: 'x64'
+      - name: Update gems
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Update mn2sts.jar
+        run: |
+          rm -f bin/mn2sts.jar
+          rake bin/mn2sts.jar
+      - name: Run specs
+        run: |
+          bundle exec rake
+      - name: Publish to rubygems.org
+        env:
+          RUBYGEMS_API_KEY: ${{secrets.METANORMA_CI_RUBYGEMS_API_KEY}}
+        run: |
+          gem install gem-release
+          touch ~/.gem/credentials
+          cat > ~/.gem/credentials << EOF
+          ---
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          EOF
+          chmod 0600 ~/.gem/credentials
+          git status
+          gem release

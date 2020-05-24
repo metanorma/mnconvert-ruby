@@ -1,0 +1,49 @@
+name: release-tag
+
+on:
+  repository_dispatch:
+    types: [ metanorma/mn2sts ]
+
+jobs:
+  tag_repo:
+    runs-on: ubuntu-18.04
+    if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v1
+      - name: Add writable remote
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git remote add github https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          git pull github ${GITHUB_REF} --ff-only
+      - name: Parse mn2sts version
+        env:
+          mn2sts_TAG: ${{ github.event.client_payload.ref }}
+        run: |
+          echo "::set-env name=mn2sts_VERSION::${mn2sts_TAG#*/v}"
+      - name: Use Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+          architecture: 'x64'
+      - name: Update gems
+        run: |
+          gem install gem-release
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Update version
+        run: |
+          gem bump --version ${mn2sts_VERSION} --no-commit
+      - name: Update mn2sts.jar
+        run: |
+          rm -f bin/mn2sts.jar
+          rake bin/mn2sts.jar
+      - name: Run specs
+        run: |
+          bundle exec rake
+      - name: Push commit and tag
+        run: |
+          git add -u bin/mn2sts.jar lib/mn2sts/version.rb
+          git commit -m "Bump version to ${mn2sts_VERSION}"
+          git tag v${mn2sts_VERSION}
+          git push github HEAD:${GITHUB_REF} --tags

@@ -1,0 +1,50 @@
+= mn2sts Ruby gem
+
+image:https://img.shields.io/gem/v/metanorma.svg["Gem Version", link="https://rubygems.org/gems/metanorma"]
+image:https://github.com/metanorma/mn2sts-ruby/workflows/ubuntu/badge.svg["Ubuntu Build Status", link="https://github.com/metanorma/mn2sts-ruby/actions?query=workflow%3Aubuntu"]
+image:https://github.com/metanorma/mn2sts-ruby/workflows/macos/badge.svg["OSX Build Status", link="https://github.com/metanorma/mn2sts-ruby/actions?query=workflow%3Amacos"]
+image:https://github.com/metanorma/mn2sts-ruby/workflows/windows/badge.svg["Windows Build Status", link="https://github.com/metanorma/mn2sts-ruby/actions?query=workflow%3Awindows"]
+image:https://codeclimate.com/github/metanorma/mn2sts-ruby/badges/gpa.svg["Code Climate", link="https://codeclimate.com/github/metanorma/mn2sts-ruby"]
+image:https://img.shields.io/github/issues-pr-raw/metanorma/mn2sts-ruby.svg["Pull Requests", link="https://github.com/metanorma/mn2sts-ruby/pulls"]
+image:https://img.shields.io/github/commits-since/metanorma/mn2sts-ruby/latest.svg["Commits since latest",link="https://github.com/metanorma/mn2sts-ruby/releases"]
+
+== Purpose
+
+The mn2sts Ruby gem is a wrapper around the Java https://github.com/metanorma/mn2sts[mn2sts]
+which converts Metanorma XML files into native PDFs.
+
+This gem is used to provide mn2sts.jar with mirrored version numbers, to allow
+Ruby code to easily refer to the desired mn2sts version as dependencies.
+
+== Installation
+
+[source,ruby]
+----
+gem install mn2sts
+----
+
+Or include it in your gemspec.
+
+== Usage
+
+[source,ruby]
+----
+require 'mn2sts'
+Mn2sts.convert(sample_xml_path, output_pdf_path, sample_xsl_path)
+----
+
+== Updating the gem
+
+Update `lib/mn2sts/version.rb` to the desired version of https://github.com/metanorma/mn2sts[mn2sts].
+
+Run `rake` to download the `bin/mn2sts.jar` file:
+
+[source,ruby]
+----
+rm -f bin/mn2sts.jar
+rake bin/mn2sts.jar
+----
+
+Then release the gem with `rake release`.
+
+
