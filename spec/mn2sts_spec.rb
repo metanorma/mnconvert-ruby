@@ -3,7 +3,8 @@ require 'tmpdir'
 RSpec.describe Mn2sts do
 
   it 'matches the version number of JAR' do
-    expect(Mn2sts::VERSION).to eq(Mn2sts.version)
+    expect(Mn2sts::VERSION.split('.')[0..1].join('.')).to eq(Mn2sts.version)
+    expect(Mn2sts::MN2STS_JAR_VERSION).to eq(Mn2sts.version)
   end
 
   # it 'converts XML to STS' do

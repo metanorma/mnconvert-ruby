@@ -9,7 +9,7 @@ task :default => :spec
 require 'open-uri'
 
 file 'bin/mn2sts.jar' do |file|
-  ver = Mn2sts::VERSION
+  ver = Mn2sts::MN2STS_JAR_VERSION
   url = "https://github.com/metanorma/mn2sts/releases/download/v#{ver}/mn2sts-#{ver}.jar"
   File.open(file.name, 'wb') do |file|
     file.write open(url).read
