@@ -21,8 +21,8 @@ module Mn2sts
 
     puts MN2STS_JAR_PATH
     cmd = ['java', '-Xss5m', '-Xmx1024m', '-jar', MN2STS_JAR_PATH,
-           ' --xml-file-in', xml_path_in,
-           ' --xml-file-out', xml_path_out
+           '--xml-file-in', xml_path_in,
+           '--xml-file-out', xml_path_out
           ].join(' ')
 
     puts cmd
