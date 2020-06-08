@@ -9,23 +9,25 @@ RSpec.describe Mn2sts do
 
   it 'converts XML to STS' do
 
-     Dir.mktmpdir do |dir|
-       pdf_path = File.join(dir, 'test.mn.sts.xml')
-       begin
-       Mn2sts.convert(sample_xml, pdf_path)
-       rescue RuntimeError => e  
-         puts e.message
-         puts e.backtrace.inspect
-         raise e
-       end
-       expect(File.exist?(pdf_path)).to be true
-     end
+    Dir.mktmpdir do |dir|
+      sts_path = File.join(dir, 'rice-en.cd.sts.xml')
 
-   end
+      begin
+        Mn2sts.convert(mn_xml, sts_path)
+      rescue RuntimeError => e
+        puts e.message
+        puts e.backtrace.inspect
+        raise e
+      end
 
-   let(:sample_xml) do
-     Pathname.new(File.dirname(__dir__)).
-     join('spec', 'fixtures', 'test.mn.xml').to_s
-   end
+      expect(File.exist?(sts_path)).to be true
+    end
+
+  end
+
+  let(:mn_xml) do
+    Pathname.new(File.dirname(__dir__)).
+    join('spec', 'fixtures', 'rice-en.cd.mn.xml').to_s
+  end
 
 end
