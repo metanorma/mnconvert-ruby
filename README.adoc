@@ -30,7 +30,7 @@ Or include it in your gemspec.
 [source,ruby]
 ----
 require 'mn2sts'
-Mn2sts.convert(sample_xml_path, output_pdf_path, sample_xsl_path)
+Mn2sts.convert(sample_xml_path, output_pdf_path)
 ----
 
 == Updating the gem

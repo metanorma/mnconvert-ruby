@@ -29,6 +29,7 @@ module Mn2sts
     _, error_str, status = Open3.capture3(cmd)
 
     unless status.success?
+      warn error_str
       raise error_str
     end
   end
