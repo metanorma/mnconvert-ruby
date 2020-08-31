@@ -1,4 +1,5 @@
 require 'tmpdir'
+require 'fileutils'
 
 RSpec.describe Mn2sts do
 
@@ -12,6 +13,7 @@ RSpec.describe Mn2sts do
     Dir.mktmpdir do |dir|
       sts_path = File.join(dir, 'rice-en.cd.sts.xml')
 
+      FileUtils.rm_f(sts_path)
       begin
         Mn2sts.convert(mn_xml, sts_path)
       rescue RuntimeError => e
@@ -19,8 +21,27 @@ RSpec.describe Mn2sts do
         puts e.backtrace.inspect
         raise e
       end
-
       expect(File.exist?(sts_path)).to be true
+      expect(File.read(sts_path)).to include '<code language="ruby"'
+    end
+
+  end
+
+  it 'converts XML to ISO STS' do
+
+    Dir.mktmpdir do |dir|
+      sts_path = File.join(dir, 'rice-en.cd.isosts.xml')
+
+      FileUtils.rm_f(sts_path)
+      begin
+        Mn2sts.convert(mn_xml, sts_path, iso: true)
+      rescue RuntimeError => e
+        puts e.message
+        puts e.backtrace.inspect
+        raise e
+      end
+      expect(File.exist?(sts_path)).to be true
+      expect(File.read(sts_path)).to include '<preformat preformat-type="ruby">'
     end
 
   end

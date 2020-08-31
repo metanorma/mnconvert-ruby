@@ -1,4 +1,4 @@
 module Mn2sts
-  MN2STS_JAR_VERSION = '1.3'
+  MN2STS_JAR_VERSION = '1.5'
   VERSION = "#{MN2STS_JAR_VERSION}.0"
 end

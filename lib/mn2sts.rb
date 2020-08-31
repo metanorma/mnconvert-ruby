@@ -16,7 +16,7 @@ module Mn2sts
     message.strip
   end
 
-  def self.convert(xml_path_in, xml_path_out)
+  def self.convert(xml_path_in, xml_path_out, opts = {})
     return if xml_path_in.nil? || xml_path_out.nil?
 
     puts MN2STS_JAR_PATH
@@ -24,6 +24,8 @@ module Mn2sts
            '--xml-file-in', xml_path_in,
            '--xml-file-out', xml_path_out
           ].join(' ')
+
+    cmd += " --output-format iso" if opts[:iso]
 
     puts cmd
     _, error_str, status = Open3.capture3(cmd)
