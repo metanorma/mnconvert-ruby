@@ -20,7 +20,7 @@ jobs:
         env:
           mn2sts_TAG: ${{ github.event.client_payload.ref }}
         run: |
-          echo "::set-env name=mn2sts_VERSION::${mn2sts_TAG#*/v}"
+          echo mn2sts_VERSION=${mn2sts_TAG#*/v} >> ${GITHUB_ENV}
       - name: Use Ruby
         uses: actions/setup-ruby@v1
         with:
