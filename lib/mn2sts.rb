@@ -4,14 +4,24 @@ require 'mn2sts/version'
 module Mn2sts
   MN2STS_JAR_PATH = File.join(File.dirname(__FILE__), '../bin/mn2sts.jar')
 
+  def self.jvm_options
+    options = []
+
+    if RbConfig::CONFIG["host_os"].match?(/darwin|mac os/)
+      options << "-Dapple.awt.UIElement=true"
+    end
+
+    options
+  end
+
   def self.help
-    cmd = ['java', '-jar', MN2STS_JAR_PATH].join(' ')
+    cmd = ['java', *jvm_options, '-jar', MN2STS_JAR_PATH].join(' ')
     message, error_str, status = Open3.capture3(cmd)
     message
   end
 
   def self.version
-    cmd = ['java', '-jar', MN2STS_JAR_PATH, '-v'].join(' ')
+    cmd = ['java', *jvm_options, '-jar', MN2STS_JAR_PATH, '-v'].join(' ')
     message, error_str, status = Open3.capture3(cmd)
     message.strip
   end
@@ -20,10 +30,8 @@ module Mn2sts
     return if xml_path_in.nil? || xml_path_out.nil?
 
     puts MN2STS_JAR_PATH
-    cmd = ['java', '-Xss5m', '-Xmx1024m', '-jar', MN2STS_JAR_PATH,
-           '--xml-file-in', xml_path_in,
-           '--xml-file-out', xml_path_out
-          ].join(' ')
+    cmd = ['java', '-Xss5m', '-Xmx1024m', *jvm_options, '-jar', MN2STS_JAR_PATH,
+           '--xml-file-in', xml_path_in, '--xml-file-out', xml_path_out].join(' ')
 
     cmd += " --output-format iso" if opts[:iso]
 
