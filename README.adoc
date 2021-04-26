@@ -1,6 +1,6 @@
 = mn2sts Ruby gem
 
-image:https://img.shields.io/gem/v/metanorma.svg["Gem Version", link="https://rubygems.org/gems/metanorma"]
+image:https://img.shields.io/gem/v/metanorma.svg["Gem Version", link="https://rubygems.org/gems/mn2sts-ruby"]
 image:https://github.com/metanorma/mn2sts-ruby/workflows/ubuntu/badge.svg["Ubuntu Build Status", link="https://github.com/metanorma/mn2sts-ruby/actions?query=workflow%3Aubuntu"]
 image:https://github.com/metanorma/mn2sts-ruby/workflows/macos/badge.svg["OSX Build Status", link="https://github.com/metanorma/mn2sts-ruby/actions?query=workflow%3Amacos"]
 image:https://github.com/metanorma/mn2sts-ruby/workflows/windows/badge.svg["Windows Build Status", link="https://github.com/metanorma/mn2sts-ruby/actions?query=workflow%3Awindows"]
