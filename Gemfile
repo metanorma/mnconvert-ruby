@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in mn2sts.gemspec
+# Specify your gem's dependencies in mnconvert.gemspec
 gemspec
 
 gem "rake", "~> 12.0"

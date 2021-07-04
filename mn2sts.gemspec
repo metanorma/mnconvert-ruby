@@ -1,19 +1,19 @@
-require_relative 'lib/mn2sts/version'
+require_relative 'lib/mnconvert/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "mn2sts"
-  spec.version       = Mn2sts::VERSION
+  spec.name          = "mnconvert"
+  spec.version       = MnConvert::VERSION
   spec.authors       = ["Ribose Inc."]
   spec.email         = ["open.source@ribose.com"]
 
-  spec.summary       = "mn2sts converts Metanorma XML into NISO STS XML."
+  spec.summary       = "mnconvert converts Metanorma XML into NISO STS XML."
   spec.description   = <<~DESCRIPTION
-    mn2sts converts Metanorma XML into NISO STS XML.
-    This gem is a wrapper around mn2sts.jar available from
-    https://github.com/metanorma/mn2sts, with versions matching the JAR file.
+    mnconvert converts Metanorma XML into NISO STS XML.
+    This gem is a wrapper around mnconvert.jar available from
+    https://github.com/metanorma/mnconvert, with versions matching the JAR file.
   DESCRIPTION
 
-  spec.homepage      = "https://github.com/metanorma/mn2sts-ruby"
+  spec.homepage      = "https://github.com/metanorma/mnconvert-ruby"
   spec.license       = "BSD-2-Clause"
 
   spec.bindir        = "bin"

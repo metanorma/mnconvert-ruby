@@ -2,7 +2,7 @@ name: release-tag
 
 on:
   repository_dispatch:
-    types: [ metanorma/mn2sts ]
+    types: [ metanorma/mnconvert ]
 
 jobs:
   tag_repo:
@@ -16,11 +16,11 @@ jobs:
           git config --global user.email "metanorma-ci@users.noreply.github.com"
           git remote add github https://metanorma-ci:${{ secrets.METANORMA_CI_PAT_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git pull github ${GITHUB_REF} --ff-only
-      - name: Parse mn2sts version
+      - name: Parse mnconvert version
         env:
-          mn2sts_TAG: ${{ github.event.client_payload.ref }}
+          mnconvert_TAG: ${{ github.event.client_payload.ref }}
         run: |
-          echo mn2sts_VERSION=${mn2sts_TAG#*/v} >> ${GITHUB_ENV}
+          echo mnconvert_VERSION=${mnconvert_TAG#*/v} >> ${GITHUB_ENV}
       - name: Use Ruby
         uses: actions/setup-ruby@v1
         with:
@@ -33,17 +33,17 @@ jobs:
           bundle install --jobs 4 --retry 3
       - name: Update version
         run: |
-          gem bump --version ${mn2sts_VERSION} --no-commit
-      - name: Update mn2sts.jar
+          gem bump --version ${mnconvert_VERSION} --no-commit
+      - name: Update mnconvert.jar
         run: |
-          rm -f bin/mn2sts.jar
-          rake bin/mn2sts.jar
+          rm -f bin/mnconvert.jar
+          rake bin/mnconvert.jar
       - name: Run specs
         run: |
           bundle exec rake
       - name: Push commit and tag
         run: |
-          git add -u bin/mn2sts.jar lib/mn2sts/version.rb
-          git commit -m "Bump version to ${mn2sts_VERSION}"
-          git tag v${mn2sts_VERSION}
+          git add -u bin/mnconvert.jar lib/mnconvert/version.rb
+          git commit -m "Bump version to ${mnconvert_VERSION}"
+          git tag v${mnconvert_VERSION}
           git push github HEAD:${GITHUB_REF} --tags

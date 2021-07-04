@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "mn2sts"
+require "mnconvert"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

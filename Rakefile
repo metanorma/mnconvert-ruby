@@ -1,17 +1,17 @@
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
-require_relative 'lib/mn2sts/version'
+require_relative 'lib/mnconvert/version'
 require 'open-uri'
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => ['bin/mn2sts.jar', 'spec/fixtures/rice-en.cd.mn.xml', :spec]
+task :default => ['bin/mnconvert.jar', 'spec/fixtures/rice-en.cd.mn.xml', :spec]
 
 require 'open-uri'
 
-file 'bin/mn2sts.jar' do |file|
-  ver = Mn2sts::MN2STS_JAR_VERSION
-  url = "https://github.com/metanorma/mn2sts/releases/download/v#{ver}/mn2sts-#{ver}.jar"
+file 'bin/mnconvert.jar' do |file|
+  ver = MnConvert::MNCONVERT_JAR_VERSION
+  url = "https://github.com/metanorma/mnconvert/releases/download/v#{ver}/mnconvert-#{ver}.jar"
   File.open(file.name, 'wb') do |file|
     file.write open(url).read
   end
