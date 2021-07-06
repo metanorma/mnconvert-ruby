@@ -1,9 +1,7 @@
 = mnconvert Ruby gem
 
 image:https://img.shields.io/gem/v/mnconvert.svg["Gem Version", link="https://rubygems.org/gems/mnconvert"]
-image:https://github.com/metanorma/mnconvert-ruby/workflows/ubuntu/badge.svg["Ubuntu Build Status", link="https://github.com/metanorma/mnconvert-ruby/actions?query=workflow%3Aubuntu"]
-image:https://github.com/metanorma/mnconvert-ruby/workflows/macos/badge.svg["OSX Build Status", link="https://github.com/metanorma/mnconvert-ruby/actions?query=workflow%3Amacos"]
-image:https://github.com/metanorma/mnconvert-ruby/workflows/windows/badge.svg["Windows Build Status", link="https://github.com/metanorma/mnconvert-ruby/actions?query=workflow%3Awindows"]
+image:https://github.com/metanorma/mnconvert-ruby/workflows/rake/badge.svg["Ubuntu Build Status", link="https://github.com/metanorma/mnconvert-ruby/actions/workflows/rake.yml"]
 image:https://codeclimate.com/github/metanorma/mnconvert-ruby/badges/gpa.svg["Code Climate", link="https://codeclimate.com/github/metanorma/mnconvert-ruby"]
 image:https://img.shields.io/github/issues-pr-raw/metanorma/mnconvert-ruby.svg["Pull Requests", link="https://github.com/metanorma/mnconvert-ruby/pulls"]
 image:https://img.shields.io/github/commits-since/metanorma/mnconvert-ruby/latest.svg["Commits since latest",link="https://github.com/metanorma/mnconvert-ruby/releases"]
