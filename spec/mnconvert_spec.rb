@@ -17,7 +17,7 @@ RSpec.describe MnConvert do
 
       FileUtils.rm_f(sts_path)
       begin
-        MnConvert.convert(mn_xml, sts_path, MnConvert::InputFormat::STS,
+        MnConvert.convert(mn_xml, sts_path, MnConvert::InputFormat::MN,
           { debug: true })
       rescue RuntimeError => e
         puts e.message
@@ -35,7 +35,7 @@ RSpec.describe MnConvert do
 
       FileUtils.rm_f(sts_path)
       begin
-        MnConvert.convert(mn_xml, sts_path, MnConvert::InputFormat::STS,
+        MnConvert.convert(mn_xml, sts_path, MnConvert::InputFormat::MN,
           { output_format: :iso, debug: true })
       rescue RuntimeError => e
         puts e.message
@@ -47,34 +47,59 @@ RSpec.describe MnConvert do
     end
   end
 
-  it "converts XML to PDF" do
-    Dir.mktmpdir do |dir|
-      pdf_path = File.join(dir, "G.191.pdf")
+  %w(adoc xml).each do |format|
+    it "converts STS to MN #{format} in specified location" do
+      Dir.mktmpdir do |dir|
+        sts_path = -> (format) { File.join(dir, "sts.#{format}") }
+        mn_path = -> (format) { File.join(dir, "mn.#{format}") }
 
-      MnConvert.convert(sample_xml, pdf_path, MnConvert::InputFormat::MN,
-        { xsl_file: sample_xsl, debug: true })
-      expect(File.exist?(pdf_path)).to be true
+        source = sts_path.('xml')
+        mn_dest = mn_path.(format)
+        FileUtils.cp(sts_xml, source)
+
+        begin
+          MnConvert.convert(source, mn_dest, MnConvert::InputFormat::STS,
+            { output_format: format, debug: true })
+        rescue RuntimeError => e
+          puts e.message
+          puts e.backtrace.inspect
+          raise e
+        end
+
+        expect(File.exist?(mn_dest)).to be true
+      end
     end
   end
 
-  it "raise an error on converting not existing XML" do
-    pdf_path = "missing.pdf"
-    xml_path = "missing.xml"
-    expect do
-      MnConvert.convert(xml_path, pdf_path, MnConvert::InputFormat::MN,
-        { xsl_file: sample_xsl, debug: true })
-    end.to raise_error(/XML file '#{xml_path}' not found!/)
-    expect(File.exist?(pdf_path)).to be false
+  it "converts STS to MN adoc by default" do
+    Dir.mktmpdir do |dir|
+      sts_path = -> (format) { File.join(dir, "sts.#{format}") }
+
+      source = sts_path.('xml')
+      mn_adoc = sts_path.('adoc')
+      FileUtils.cp(sts_xml, source)
+      MnConvert.convert(source, mn_adoc, MnConvert::InputFormat::STS)
+
+      expect(File.exist?(mn_adoc)).to be true
+    end
   end
 
-  let(:sample_xsl) do
-    Pathname.new(File.dirname(__dir__))
-      .join("spec", "fixtures", "itu.recommendation.xsl").to_s
+  it "splits bibdata and generates adoc output" do
+    mn_path = -> (dir, format) { File.join(dir, "sts.#{format}") }
+    Dir.mktmpdir do |dir|
+      FileUtils.cp(sts_xml, mn_path.(dir, 'xml'))
+      MnConvert.convert(mn_path.(dir, 'xml'), mn_path.(dir, 'adoc'),
+        MnConvert::InputFormat::STS,
+        { split_bibdata: true, debug: true })
+
+      expect(File.exist?(mn_path.(dir, 'adoc'))).to be true
+      expect(File.exist?(mn_path.(dir, 'rxl'))).to be true
+    end
   end
 
-  let(:sample_xml) do
-    Pathname.new(File.dirname(__dir__))
-      .join("spec", "fixtures", "G.191.xml").to_s
+  let(:sts_xml) do
+    Pathname.new(File.dirname(__dir__)).
+    join('spec', 'fixtures', 'rice-en.final.sts.xml').to_s
   end
 
   let(:mn_xml) do

@@ -32,11 +32,11 @@ module MnConvert
   end
 
   def self.convert(input_file, output_file, input_format, opts = {})
-    optional_opts = validate(opts, input_format)
+    validate(opts, input_format)
 
     cmd = ["java", *jvm_options, "-jar", MNCONVERT_JAR_PATH,
            input_file, "--input-format", input_format,
-           "--output", output_file, *optional_opts].join(" ")
+           "--output", output_file, *optional_opts(opts)].join(" ")
 
     puts cmd if opts[:debug]
     output_str, error_str, status = Open3.capture3(cmd)
@@ -64,7 +64,7 @@ module MnConvert
     end
 
     def validate_mn(opts, output_format)
-      unless output_format.nil? || %w(xml adoc).include?(output_format.to_s)
+      unless output_format.nil? || %W(iso niso).include?(output_format.to_s)
         raise StandardError.new("Invalid output format: #{output_format}")
       end
 
@@ -78,7 +78,7 @@ module MnConvert
     end
 
     def validate_sts(_opts, output_format)
-      unless output_format.nil? || %W(iso niso).include?(output_format.to_s)
+      unless output_format.nil? || %w(xml adoc).include?(output_format.to_s)
         raise StandardError.new("Invalid output format: #{output_format}")
       end
     end
