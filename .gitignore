@@ -12,6 +12,5 @@
 .rspec_status
 /.rubocop-http*
 
-/bin/mnconvert.jar
 /spec/fixtures/rice-en.cd.mn.xml
 /spec/fixtures/rice-en.final.sts.xml
