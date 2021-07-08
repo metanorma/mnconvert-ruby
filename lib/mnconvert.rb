@@ -64,7 +64,7 @@ module MnConvert
     end
 
     def validate_mn(opts, output_format)
-      unless output_format.nil? || %W(iso niso).include?(output_format.to_s)
+      unless output_format.nil? || %w(iso niso).include?(output_format.to_s)
         raise StandardError.new("Invalid output format: #{output_format}")
       end
 
@@ -84,15 +84,17 @@ module MnConvert
     end
 
     def optional_opts(opts)
-      result = []
-
-      {
-        sts_type: "--type", imagesdir: "--imagesdir", check_type: "--check-type",
-        output_format: "--output-format", xsl_file: "--xsl-file",
+      result = {
+        sts_type: "--type",
+        imagesdir: "--imagesdir",
+        check_type: "--check-type",
+        output_format: "--output-format",
+        xsl_file: "--xsl-file",
       }.reject { |k, _| opts[k].nil? }.map { |k, v| "#{v} #{opts[k]}" }
 
       result << "--debug" if opts[:debug]
       result << "--split-bibdata" if opts[:split_bibdata]
+
       result
     end
   end
