@@ -11,12 +11,30 @@ RSpec.describe MnConvert do
     expect(MnConvert.help).not_to be_empty
   end
 
+  it "converts XML to STS without specifying output" do
+    FileUtils.cp(mn_xml, Dir.pwd)
+    input = File.join(Dir.pwd, "rice-en.cd.mn.xml")
+    output = File.join(Dir.pwd, "rice-en.cd.mn.sts.niso.xml")
+    MnConvert.convert(
+      input,
+      {
+        input_format: :metanorma,
+        debug: true,
+      },
+    )
+    expect(File.exist?(output)).to be true
+    expect(File.read(output)).to include '<code language="ruby"'
+  end
+
   it "converts XML to STS" do
     sts_path = File.join(Dir.pwd, "rice-en.cd.sts.xml")
-    FileUtils.rm_f(sts_path)
     MnConvert.convert(
-      mn_xml, sts_path,
-      { input_format: :metanorma, debug: true }
+      mn_xml,
+      {
+        output_file: sts_path,
+        input_format: :metanorma,
+        debug: true,
+      },
     )
     expect(File.exist?(sts_path)).to be true
     expect(File.read(sts_path)).to include '<code language="ruby"'
@@ -24,7 +42,7 @@ RSpec.describe MnConvert do
 
   it "converts XML to STS (autodetect)" do
     out_path = File.join(Dir.pwd, "rice-en.xml")
-    MnConvert.convert(mn_xml, out_path)
+    MnConvert.convert(mn_xml, { output_file: out_path })
     expect(File.exist?(out_path)).to be true
     expect(File.read(out_path)).to include '<code language="ruby"'
   end
@@ -32,10 +50,14 @@ RSpec.describe MnConvert do
   it "converts XML to ISO STS" do
     sts_path = File.join(Dir.pwd, "rice-en.cd.isosts.xml")
 
-    FileUtils.rm_f(sts_path)
     MnConvert.convert(
-      mn_xml, sts_path,
-      { input_format: :metanorma, output_format: :iso, debug: true }
+      mn_xml,
+      {
+        output_file: sts_path,
+        input_format: :metanorma,
+        output_format: :iso,
+        debug: true,
+      },
     )
 
     expect(File.exist?(sts_path)).to be true
@@ -52,10 +74,13 @@ RSpec.describe MnConvert do
       FileUtils.cp(sts_xml, source)
 
       MnConvert.convert(
-        source, mn_dest,
-        { input_format: :sts,
+        source,
+        {
+          output_file: mn_dest,
+          input_format: :sts,
           output_format: format,
-          debug: true }
+          debug: true,
+        },
       )
 
       expect(File.exist?(mn_dest)).to be true
@@ -69,8 +94,11 @@ RSpec.describe MnConvert do
     mn_adoc = sts_path.("adoc")
     FileUtils.cp(sts_xml, source)
     MnConvert.convert(
-      source, mn_adoc,
-      { input_format: MnConvert::InputFormat::STS }
+      source,
+      {
+        output_file: mn_adoc,
+        input_format: MnConvert::InputFormat::STS,
+      },
     )
 
     expect(File.exist?(mn_adoc)).to be true
@@ -81,10 +109,12 @@ RSpec.describe MnConvert do
     FileUtils.cp(sts_xml, mn_path.("xml"))
     MnConvert.convert(
       mn_path.("xml"),
-      mn_path.("adoc"),
-      { input_format: MnConvert::InputFormat::STS,
+      {
+        output_file: mn_path.("adoc"),
+        input_format: MnConvert::InputFormat::STS,
         split_bibdata: true,
-        debug: true },
+        debug: true,
+      },
     )
 
     expect(File.exist?(mn_path.("adoc"))).to be true
