@@ -7,7 +7,9 @@ module MnConvert
     STS = :sts
   end
 
-  MNCONVERT_JAR_PATH = File.join(File.dirname(__FILE__), "../bin/mnconvert.jar")
+  MNCONVERT_JAR_NAME = "mnconvert.jar".freeze
+  MNCONVERT_JAR_PATH = File.join(File.dirname(__FILE__), "..", "bin",
+                                 MNCONVERT_JAR_NAME)
 
   def self.jvm_options
     options = ["-Xss5m", "-Xmx1024m"]
@@ -31,12 +33,11 @@ module MnConvert
     message.strip
   end
 
-  def self.convert(input_file, output_file, input_format, opts = {})
-    validate(opts, input_format)
+  def self.convert(input_file, output_file, opts = {})
+    validate(opts)
 
-    cmd = ["java", *jvm_options, "-jar", MNCONVERT_JAR_PATH,
-           input_file, "--input-format", input_format,
-           "--output", output_file, *optional_opts(opts)].join(" ")
+    cmd = [*java_cmd, input_file, "--output", output_file,
+           *optional_opts(opts)].join(" ")
 
     puts cmd if opts[:debug]
     output_str, error_str, status = Open3.capture3(cmd)
@@ -50,16 +51,30 @@ module MnConvert
   class << self
     private
 
-    def validate(opts, input_format)
-      output_format = opts[:output_format]
+    OPTIONAL_OPTS = {
+      sts_type: "--type",
+      imagesdir: "--imagesdir",
+      check_type: "--check-type",
+      input_format: "--input-format",
+      output_format: "--output-format",
+      xsl_file: "--xsl-file",
+    }.freeze
 
-      case input_format
+    def java_cmd
+      ["java", *jvm_options, "-jar", MNCONVERT_JAR_PATH]
+    end
+
+    def validate(opts)
+      output_format = opts[:output_format]
+      debug = opts[:debug]
+
+      case opts[:input_format]
       when InputFormat::MN
         validate_mn(opts, output_format)
       when InputFormat::STS
         validate_sts(opts, output_format)
       else
-        raise StandardError.new("Invalid input format: #{input_format}")
+        puts "input format will be decided by #{MNCONVERT_JAR_NAME}" if debug
       end
     end
 
@@ -84,13 +99,8 @@ module MnConvert
     end
 
     def optional_opts(opts)
-      result = {
-        sts_type: "--type",
-        imagesdir: "--imagesdir",
-        check_type: "--check-type",
-        output_format: "--output-format",
-        xsl_file: "--xsl-file",
-      }.reject { |k, _| opts[k].nil? }.map { |k, v| "#{v} #{opts[k]}" }
+      result = OPTIONAL_OPTS.reject { |k, _| opts[k].nil? }
+      result = result.map { |k, v| "#{v} #{opts[k]}" }
 
       result << "--debug" if opts[:debug]
       result << "--split-bibdata" if opts[:split_bibdata]
