@@ -33,11 +33,10 @@ module MnConvert
     message.strip
   end
 
-  def self.convert(input_file, output_file, opts = {})
+  def self.convert(input_file, opts = {})
     validate(opts)
 
-    cmd = [*java_cmd, input_file, "--output", output_file,
-           *optional_opts(opts)].join(" ")
+    cmd = [*java_cmd, input_file, *optional_opts(opts)].join(" ")
 
     puts cmd if opts[:debug]
     output_str, error_str, status = Open3.capture3(cmd)
@@ -57,6 +56,7 @@ module MnConvert
       check_type: "--check-type",
       input_format: "--input-format",
       output_format: "--output-format",
+      output_file: "--output",
       xsl_file: "--xsl-file",
     }.freeze
 
