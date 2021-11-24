@@ -104,6 +104,7 @@ module MnConvert
 
       result << "--debug" if opts[:debug]
       result << "--split-bibdata" if opts[:split_bibdata]
+      result << "--semantic" if opts[:semantic]
 
       result
     end
