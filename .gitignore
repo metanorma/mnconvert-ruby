@@ -11,8 +11,3 @@
 # rspec failure tracking
 .rspec_status
 /.rubocop-http*
-
-/spec/fixtures/rice-en.cd.mn.xml
-/spec/fixtures/rice-en.final.sts.xml
-/spec/fixtures/rfc8650.xml
-/spec/fixtures/rfc8650.adoc
