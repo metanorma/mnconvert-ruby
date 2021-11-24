@@ -1,5 +1,6 @@
 require "tmpdir"
 require "fileutils"
+require "pathname"
 
 RSpec.describe MnConvert do
   it "gem version more or equal to JAR version" do
@@ -12,9 +13,8 @@ RSpec.describe MnConvert do
   end
 
   it "converts XML to STS without specifying output" do
-    FileUtils.cp(mn_xml, Dir.pwd)
-    input = File.join(Dir.pwd, "rice-en.cd.mn.xml")
-    output = File.join(Dir.pwd, "rice-en.cd.mn.sts.niso.xml")
+    input = copy_to_sandbox(mn_xml)
+    output = Pathname.new(Dir.pwd) / "rice-en.cd.mn.sts.niso.xml"
     MnConvert.convert(
       input,
       {
@@ -22,12 +22,12 @@ RSpec.describe MnConvert do
         debug: true,
       },
     )
-    expect(File.exist?(output)).to be true
-    expect(File.read(output)).to include '<code language="ruby"'
+    expect(output.exist?).to be true
+    expect(output.read).to include '<code language="ruby"'
   end
 
   it "converts XML to STS" do
-    sts_path = File.join(Dir.pwd, "rice-en.cd.sts.xml")
+    sts_path = Pathname.new(Dir.pwd) / "rice-en.cd.sts.xml"
     MnConvert.convert(
       mn_xml,
       {
@@ -36,19 +36,19 @@ RSpec.describe MnConvert do
         debug: true,
       },
     )
-    expect(File.exist?(sts_path)).to be true
-    expect(File.read(sts_path)).to include '<code language="ruby"'
+    expect(sts_path.exist?).to be true
+    expect(sts_path.read).to include '<code language="ruby"'
   end
 
   it "converts XML to STS (autodetect)" do
-    out_path = File.join(Dir.pwd, "rice-en.xml")
+    out_path = Pathname.new(Dir.pwd) / "rice-en.xml"
     MnConvert.convert(mn_xml, { output_file: out_path })
-    expect(File.exist?(out_path)).to be true
-    expect(File.read(out_path)).to include '<code language="ruby"'
+    expect(out_path.exist?).to be true
+    expect(out_path.read).to include '<code language="ruby"'
   end
 
   it "converts XML to ISO STS" do
-    sts_path = File.join(Dir.pwd, "rice-en.cd.isosts.xml")
+    sts_path = Pathname.new(Dir.pwd) / "rice-en.cd.isosts.xml"
 
     MnConvert.convert(
       mn_xml,
@@ -60,65 +60,84 @@ RSpec.describe MnConvert do
       },
     )
 
-    expect(File.exist?(sts_path)).to be true
-    expect(File.read(sts_path)).to include '<preformat preformat-type="ruby">'
+    expect(sts_path.exist?).to be true
+    expect(sts_path.read).to include '<preformat preformat-type="ruby">'
   end
 
-  %w(adoc xml).each do |format|
-    it "converts STS to MN #{format} in specified location" do
-      sts_path = ->(fmt) { File.join(Dir.pwd, "sts.#{fmt}") }
-      mn_path = ->(fmt) { File.join(Dir.pwd, "mn.#{fmt}") }
-
-      source = sts_path.("xml")
-      mn_dest = mn_path.(format)
-      FileUtils.cp(sts_xml, source)
-
+  %w(adoc xml).each do |fmt|
+    it "converts STS to MN #{fmt} in specified location" do
+      source = copy_to_sandbox(sts_xml)
+      output = source.sub_ext(".#{fmt}")
       MnConvert.convert(
         source,
         {
-          output_file: mn_dest,
+          output_file: output,
           input_format: :sts,
-          output_format: format,
+          output_format: fmt,
           debug: true,
         },
       )
-
-      expect(File.exist?(mn_dest)).to be true
+      expect(output.exist?).to be true
     end
   end
 
   it "converts STS to MN adoc by default" do
-    sts_path = ->(fmt) { File.join(Dir.pwd, "sts.#{fmt}") }
-
-    source = sts_path.("xml")
-    mn_adoc = sts_path.("adoc")
-    FileUtils.cp(sts_xml, source)
+    source = copy_to_sandbox(sts_xml)
+    adoc = source.sub_ext(".adoc")
     MnConvert.convert(
       source,
       {
-        output_file: mn_adoc,
+        output_file: adoc,
         input_format: MnConvert::InputFormat::STS,
+        debug: true,
       },
     )
-
-    expect(File.exist?(mn_adoc)).to be true
+    expect(adoc.exist?).to be true
   end
 
   it "splits bibdata and generates adoc output" do
-    mn_path = ->(fmt) { File.join(Dir.pwd, "sts.#{fmt}") }
-    FileUtils.cp(sts_xml, mn_path.("xml"))
+    input = copy_to_sandbox(sts_xml)
+    adoc = input.sub_ext(".adoc")
+    rxl = adoc.sub_ext(".rxl")
     MnConvert.convert(
-      mn_path.("xml"),
+      input,
       {
-        output_file: mn_path.("adoc"),
+        output_file: adoc,
         input_format: MnConvert::InputFormat::STS,
         split_bibdata: true,
         debug: true,
       },
     )
+    expect(adoc.exist?).to be true
+    expect(rxl.exist?).to be true
+  end
 
-    expect(File.exist?(mn_path.("adoc"))).to be true
-    expect(File.exist?(mn_path.("rxl"))).to be true
+  it "converts RFC" do
+    input = copy_to_sandbox(rfc_xml)
+    MnConvert.convert(
+      input,
+      {
+        input_format: :rfc,
+        debug: true,
+      },
+    )
+    output = input.sub_ext(".adoc")
+    expect(output.exist?).to be true
+    expect(output.read).to include "= Dynamic Subscription to YANG"
+  end
+
+  it "converts RFC (autoselect)" do
+    output = Pathname.new(Dir.pwd) / "result.adoc"
+    MnConvert.convert(rfc_xml, { output_file: output, debug: true })
+
+    expect(output.exist?).to be true
+    expect(output.read).to include "= Dynamic Subscription to YANG"
+  end
+
+  def copy_to_sandbox(file)
+    result = Pathname.new(Dir.pwd) / File.basename(file)
+    FileUtils.cp(file, result)
+    result
   end
 
   let(:sts_xml) do
@@ -129,5 +148,10 @@ RSpec.describe MnConvert do
   let(:mn_xml) do
     Pathname.new(File.dirname(__dir__))
       .join("spec", "fixtures", "rice-en.cd.mn.xml").to_s
+  end
+
+  let(:rfc_xml) do
+    Pathname.new(File.dirname(__dir__))
+      .join("spec", "fixtures", "rfc8650.xml").to_s
   end
 end
