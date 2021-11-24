@@ -1,5 +1,6 @@
 require "tmpdir"
 require "fileutils"
+require "pathname"
 
 RSpec.describe MnConvert do
   it "gem version more or equal to JAR version" do
@@ -121,6 +122,35 @@ RSpec.describe MnConvert do
     expect(File.exist?(mn_path.("rxl"))).to be true
   end
 
+  it "converts RFC" do
+    input = copy_to_sandbox(rfc_xml)
+    MnConvert.convert(
+      input,
+      {
+        input_format: :rfc,
+        debug: true,
+      },
+    )
+    output = input.sub_ext(".adoc")
+    expect(File.exist?(output)).to be true
+    expect(File.read(output)).to include '= Dynamic Subscription to YANG'
+  end
+
+  it "converts RFC (autoselect)" do
+    input = copy_to_sandbox(rfc_xml)
+    MnConvert.convert(input, { debug: true })
+
+    output = input.sub_ext(".adoc")
+    expect(File.exist?(output)).to be true
+    expect(File.read(output)).to include '= Dynamic Subscription to YANG'
+  end
+
+  def copy_to_sandbox(file)
+    result = Pathname(Dir.pwd) / File.basename(file)
+    FileUtils.cp(file, result)
+    result
+  end
+
   let(:sts_xml) do
     Pathname.new(File.dirname(__dir__))
       .join("spec", "fixtures", "rice-en.final.sts.xml").to_s
@@ -129,5 +159,10 @@ RSpec.describe MnConvert do
   let(:mn_xml) do
     Pathname.new(File.dirname(__dir__))
       .join("spec", "fixtures", "rice-en.cd.mn.xml").to_s
+  end
+
+  let(:rfc_xml) do
+    Pathname.new(File.dirname(__dir__))
+      .join("spec", "fixtures", "rfc8650.xml").to_s
   end
 end

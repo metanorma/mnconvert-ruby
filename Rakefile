@@ -4,7 +4,13 @@ require_relative 'lib/mnconvert/version'
 
 RSpec::Core::RakeTask.new(:spec)
 
-task :default => ['bin/mnconvert.jar', 'spec/fixtures/rice-en.cd.mn.xml', 'spec/fixtures/rice-en.final.sts.xml', :spec]
+task default: [
+  "bin/mnconvert.jar",
+  "spec/fixtures/rice-en.cd.mn.xml",
+  "spec/fixtures/rice-en.final.sts.xml",
+  "spec/fixtures/rfc8650.xml",
+  :spec,
+]
 
 def uri_open(url)
   require 'open-uri'
@@ -32,6 +38,14 @@ end
 
 file 'spec/fixtures/rice-en.final.sts.xml' do |file|
   uri = "https://raw.githubusercontent.com/metanorma/sts2mn/master/src/test/resources/rice-en.final.sts.xml"
+
+  File.open(file.name, "w") do |saved_file|
+    saved_file.write(uri_open(uri).read)
+  end
+end
+
+file "spec/fixtures/rfc8650.xml" do |file|
+  uri = "https://raw.githubusercontent.com/metanorma/mnconvert/main/src/test/resources/rfc/rfc8650.xml"
 
   File.open(file.name, "w") do |saved_file|
     saved_file.write(uri_open(uri).read)
