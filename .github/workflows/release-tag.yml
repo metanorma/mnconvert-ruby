@@ -7,43 +7,38 @@ on:
 jobs:
   tag_repo:
     runs-on: ubuntu-18.04
-    if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
+    if: false # startsWith(github.event.client_payload.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v1
-      - name: Add writable remote
-        run: |
-          git config --global user.name metanorma-ci
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+      - run: |
+          git config --global user.name "metanorma-ci"
           git config --global user.email "metanorma-ci@users.noreply.github.com"
-          git remote add github https://metanorma-ci:${{ secrets.METANORMA_CI_PAT_TOKEN }}@github.com/$GITHUB_REPOSITORY
-          git pull github ${GITHUB_REF} --ff-only
-      - name: Parse mnconvert version
+
+      - run: echo mnconvert_VERSION=${mnconvert_TAG#*/v} >> ${GITHUB_ENV}
         env:
           mnconvert_TAG: ${{ github.event.client_payload.ref }}
-        run: |
-          echo mnconvert_VERSION=${mnconvert_TAG#*/v} >> ${GITHUB_ENV}
-      - name: Use Ruby
-        uses: actions/setup-ruby@v1
+
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
-          architecture: 'x64'
-      - name: Update gems
-        run: |
-          gem install gem-release
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-      - name: Update version
-        run: |
-          gem bump --version ${mnconvert_VERSION} --no-commit
-      - name: Update mnconvert.jar
-        run: |
+          bundler-cache: true
+
+      - run: gem install gem-release
+
+      - run: gem bump --version ${mnconvert_VERSION} --no-commit
+
+      - run: |
           rm -f bin/mnconvert.jar
           rake bin/mnconvert.jar
-      - name: Run specs
-        run: |
-          bundle exec rake
+
+      - run: bundle exec rake
+
       - name: Push commit and tag
         run: |
           git add -u bin/mnconvert.jar lib/mnconvert/version.rb
           git commit -m "Bump version to ${mnconvert_VERSION}"
           git tag v${mnconvert_VERSION}
-          git push github HEAD:${GITHUB_REF} --tags
+          git push origin HEAD:${GITHUB_REF} --tags

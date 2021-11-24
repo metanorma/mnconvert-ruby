@@ -1,0 +1,33 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      next_version:
+        description: |
+          Next release version. Possible values: x.y.z, major, minor, patch or pre|rc|etc
+        required: true
+        default: 'skip'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+      - run: |
+          git config --global user.name "metanorma-ci"
+          git config --global user.email "metanorma-ci@users.noreply.github.com"
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+          bundler-cache: true
+
+      - run: gem install gem-release
+
+      - if: github.event_name == 'workflow_dispatch' && github.event.inputs.next_version != 'skip'
+        run: gem bump --version ${{ github.event.inputs.next_version }} --tag --push
+
