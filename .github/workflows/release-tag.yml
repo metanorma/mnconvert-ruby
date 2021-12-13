@@ -7,7 +7,7 @@ on:
 jobs:
   tag_repo:
     runs-on: ubuntu-18.04
-    if: false # startsWith(github.event.client_payload.ref, 'refs/tags/v')
+    if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
         with:
