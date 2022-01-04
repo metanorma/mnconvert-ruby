@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch: # just for manual release if previous was failed
 
 jobs:
   release:
