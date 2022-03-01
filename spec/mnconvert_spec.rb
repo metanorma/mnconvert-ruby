@@ -23,7 +23,7 @@ RSpec.describe MnConvert do
       },
     )
     expect(output.exist?).to be true
-    expect(output.read).to include '<code language="ruby"'
+    expect(output.read).to match /<code id=".*" language="ruby"/
   end
 
   it "converts XML to STS" do
@@ -37,14 +37,14 @@ RSpec.describe MnConvert do
       },
     )
     expect(sts_path.exist?).to be true
-    expect(sts_path.read).to include '<code language="ruby"'
+    expect(sts_path.read).to match /<code id=".*" language="ruby"/
   end
 
   it "converts XML to STS (autodetect)" do
     out_path = Pathname.new(Dir.pwd) / "rice-en.xml"
     MnConvert.convert(mn_xml, { output_file: out_path })
     expect(out_path.exist?).to be true
-    expect(out_path.read).to include '<code language="ruby"'
+    expect(out_path.read).to match /<code id=".*" language="ruby"/
   end
 
   it "converts XML to ISO STS" do
