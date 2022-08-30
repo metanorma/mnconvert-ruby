@@ -74,6 +74,7 @@ RSpec.describe MnConvert do
         input_format: :metanorma,
         output_format: :ieee,
         debug: true,
+        validation_against: "https://github.com/metanorma/ieee-stl/blob/main/standards-1-7-DTD/standards-1-7-dtd/standards.dtd",
       },
     )
 
