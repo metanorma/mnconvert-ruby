@@ -58,6 +58,7 @@ module MnConvert
       output_format: "--output-format",
       output_file: "--output",
       xsl_file: "--xsl-file",
+      validation_against: "--validation-against",
     }.freeze
 
     def java_cmd
@@ -79,7 +80,7 @@ module MnConvert
     end
 
     def validate_mn(opts, output_format)
-      unless output_format.nil? || %w(iso niso).include?(output_format.to_s)
+      unless output_format.nil? || %w(iso niso ieee).include?(output_format.to_s)
         raise StandardError.new("Invalid output format: #{output_format}")
       end
 

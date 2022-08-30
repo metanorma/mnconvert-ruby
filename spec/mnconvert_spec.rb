@@ -64,6 +64,23 @@ RSpec.describe MnConvert do
     expect(sts_path.read).to include '<preformat preformat-type="ruby">'
   end
 
+  it "converts XML to IEEE XML" do
+    sts_path = Pathname.new(Dir.pwd) / "rice-en.cd.ieee.xml"
+
+    MnConvert.convert(
+      mn_xml,
+      {
+        output_file: sts_path,
+        input_format: :metanorma,
+        output_format: :ieee,
+        debug: true,
+      },
+    )
+
+    expect(sts_path.exist?).to be true
+    expect(sts_path.read).to include '<preformat preformat-type="ruby">'
+  end
+
   %w(adoc xml).each do |fmt|
     it "converts STS to MN #{fmt} in specified location" do
       source = copy_to_sandbox(sts_xml)
