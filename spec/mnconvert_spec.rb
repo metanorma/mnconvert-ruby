@@ -64,7 +64,7 @@ RSpec.describe MnConvert do
     expect(sts_path.read).to include '<preformat preformat-type="ruby">'
   end
 
-  it "converts XML to IEEE XML" do
+  it "converts XML to IEEE XML", :ci do
     sts_path = Pathname.new(Dir.pwd) / "rice-en.cd.ieee.xml"
 
     MnConvert.convert(
@@ -74,7 +74,7 @@ RSpec.describe MnConvert do
         input_format: :metanorma,
         output_format: :ieee,
         debug: true,
-        validation_against: "https://github.com/metanorma/ieee-stl/blob/main/standards-1-7-DTD/standards-1-7-dtd/standards.dtd",
+        validation_against: File.join(File.dirname(__FILE__), "..", "ieee-stl/standards-1-7-DTD/standards-1-7-dtd/standards.dtd"),
       },
     )
 
