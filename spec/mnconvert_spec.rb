@@ -79,7 +79,7 @@ RSpec.describe MnConvert do
     )
 
     expect(sts_path.exist?).to be true
-    expect(sts_path.read).to include '<preformat preformat-type="ruby">'
+    expect(sts_path.read).to include '<standards-document '
   end
 
   %w(adoc xml).each do |fmt|
