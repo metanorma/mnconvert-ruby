@@ -8,6 +8,10 @@ RSpec.configure do |config|
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
 
+  unless ENV["CI"]
+    config.filter_run_excluding :ci => true
+  end
+
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
