@@ -5,9 +5,15 @@ on:
     types: [ metanorma/mnconvert ]
 
 jobs:
+  prepare-ieee:
+    uses: ./.github/workflows/prepare.yml
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
   tag_repo:
     runs-on: ubuntu-18.04
     if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
+    needs: [ prepare-ieee ]
     steps:
       - uses: actions/checkout@v2
         with:
