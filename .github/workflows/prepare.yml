@@ -1,0 +1,46 @@
+name: prepare
+
+on:
+  workflow_call:
+    secrets:
+      pat_token:
+        required: false
+
+jobs:
+  prepare-ieee:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: '${{ github.workflow }}-${{ github.head_ref || github.ref_name }}'
+      cancel-in-progress: true
+    steps:
+      - run: mkdir ieee
+
+      - uses: actions/checkout@v3
+        with:
+          repository: metanorma/ieee-stl
+          token: ${{ secrets.pat_token || github.token }}
+          path: ieee/stl
+
+      - uses: actions/checkout@v3
+        with:
+          repository: metanorma/mn-samples-ieee
+          path: ieee/samples
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+          working-directory: ieee/samples
+
+      - uses: actions-mn/cli/site-gen@main
+        with:
+          source-path: ieee/samples
+          use-bundler: true
+          agree-to-terms: true
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ieee-test-input
+          path: |
+            ieee/stl/standards-1-7-DTD/standards-1-7-dtd/
+            ieee/samples/site/documents/p987.6/document.xml

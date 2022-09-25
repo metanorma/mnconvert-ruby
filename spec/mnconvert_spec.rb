@@ -65,16 +65,20 @@ RSpec.describe MnConvert do
   end
 
   it "converts XML to IEEE XML", :ci do
-    sts_path = Pathname.new(Dir.pwd) / "rice-en.cd.ieee.xml"
+    root_path = File.join(File.dirname(__FILE__), "..")
+    sts_path = Pathname.new(Dir.pwd) / "p987.6.xml"
+
+    input_xml = File.join(root_path, "ieee/samples/site/documents/p987.6/document.xml")
+    validation_dtd = File.join(root_path, "ieee/stl/standards-1-7-DTD/standards-1-7-dtd/standards.dtd")
 
     MnConvert.convert(
-      mn_xml,
+      input_xml,
       {
         output_file: sts_path,
         input_format: :metanorma,
         output_format: :ieee,
         debug: true,
-        validation_against: File.join(File.dirname(__FILE__), "..", "ieee-stl/standards-1-7-DTD/standards-1-7-dtd/standards.dtd"),
+        validation_against: validation_dtd,
       },
     )
 

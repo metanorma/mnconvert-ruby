@@ -7,8 +7,14 @@ on:
   workflow_dispatch: # just for manual release if previous was failed
 
 jobs:
+  prepare-ieee:
+    uses: ./.github/workflows/prepare.yml
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
   release:
     runs-on: ubuntu-18.04
+    needs: [ prepare-ieee ]
     steps:
       - uses: actions/checkout@v1
       - name: Use Ruby

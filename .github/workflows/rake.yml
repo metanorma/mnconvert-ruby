@@ -7,13 +7,19 @@ on:
   pull_request:
 
 jobs:
+  prepare-ieee:
+    uses: ./.github/workflows/prepare.yml
+    secrets:
+      pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
   rake:
     name: Test on Ruby ${{ matrix.ruby }} ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
     concurrency:
       group: '${{ github.workflow }}-${{ matrix.os }}-${{ matrix.ruby }}-${{ github.head_ref || github.ref_name }}'
       cancel-in-progress: true
+    needs: [ prepare-ieee ]
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       max-parallel: 5
@@ -31,10 +37,11 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         with:
-          repository: metanorma/ieee-stl
-          token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
-          path: ieee-stl
+          name: ieee-test-input
+          path: ieee
+
+      - run: ls -R ieee
 
       - run: bundle exec rake
