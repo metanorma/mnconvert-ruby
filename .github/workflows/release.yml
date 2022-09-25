@@ -25,7 +25,7 @@ jobs:
 
       - run: |
           rm -f bin/mnconvert.jar
-          rake bin/mnconvert.jar
+          bundle exec rake bin/mnconvert.jar
 
       - uses: actions/download-artifact@v3
         with:
