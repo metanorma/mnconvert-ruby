@@ -16,24 +16,25 @@ jobs:
     runs-on: ubuntu-18.04
     needs: [ prepare-ieee ]
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Ruby
-        uses: actions/setup-ruby@v1
+      - uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
-          architecture: 'x64'
-      - name: Update gems
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-      - name: Update mnconvert.jar
-        run: |
+          ruby-version: '2.7'
+          bundler-cache: true
+
+      - run: |
           rm -f bin/mnconvert.jar
           rake bin/mnconvert.jar
-      - name: Run specs
-        run: |
-          bundle exec rake
-      - name: Publish to rubygems.org
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ieee-test-input
+          path: ieee
+
+      - run: bundle exec rake
+
+      - name: publish to rubygems.org
         env:
           RUBYGEMS_API_KEY: ${{secrets.METANORMA_CI_RUBYGEMS_API_KEY}}
         run: |
