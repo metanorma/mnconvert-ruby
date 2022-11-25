@@ -4,7 +4,13 @@ on:
   push:
     tags:
       - '*'
-  workflow_dispatch: # just for manual release if previous was failed
+  workflow_dispatch:
+    inputs:
+      next_version:
+        description: |
+          Next release version. Possible values: x.y.z, major, minor, patch or pre|rc|etc
+        required: true
+        default: 'skip'
 
 jobs:
   prepare-ieee:
@@ -23,16 +29,21 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true
 
-      - run: |
-          rm -f bin/mnconvert.jar
-          bundle exec rake bin/mnconvert.jar
-
       - uses: actions/download-artifact@v3
         with:
           name: ieee-test-input
           path: ieee
 
       - run: bundle exec rake
+
+      - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
+        run: |
+          gem install gem-release
+          gem bump --version ${{ inputs.next_version }} --tag --push
+
+      - run: |
+          rm -f bin/mnconvert.jar
+          bundle exec rake bin/mnconvert.jar
 
       - name: publish to rubygems.org
         env:
