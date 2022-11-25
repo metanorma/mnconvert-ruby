@@ -32,7 +32,7 @@ jobs:
           bundler-cache: true
           working-directory: ieee/samples
 
-      - uses: actions-mn/cli/site-gen@main
+      - uses: actions-mn/site-gen@v1
         with:
           source-path: ieee/samples
           use-bundler: true
