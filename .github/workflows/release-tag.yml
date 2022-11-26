@@ -11,7 +11,7 @@ jobs:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
   tag_repo:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
     needs: [ prepare-ieee ]
     steps:

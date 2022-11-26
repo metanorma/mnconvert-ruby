@@ -19,7 +19,7 @@ jobs:
       pat_token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
   release:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: [ prepare-ieee ]
     steps:
       - uses: actions/checkout@v3
@@ -40,13 +40,18 @@ jobs:
         run: |
           git config --global user.name "metanorma-ci"
           git config --global user.email "metanorma-ci@users.noreply.github.com"
-          gem bump --version ${{ inputs.next_version }} --tag --push
-
-      - run: |
+          gem bump --version ${{ inputs.next_version }} --no-commit
           rm -f bin/mnconvert.jar
           bundle exec rake bin/mnconvert.jar
 
       - run: bundle exec rake
+
+      - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
+        run: |
+          git add -u bin/mnconvert.jar lib/mnconvert/version.rb
+          git commit -m "Bump version to ${mnconvert_VERSION}"
+          git tag v${mnconvert_VERSION}
+          git push origin HEAD:${GITHUB_REF} --tags
 
       - name: publish to rubygems.org
         env:
