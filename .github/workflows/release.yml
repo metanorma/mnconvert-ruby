@@ -34,11 +34,12 @@ jobs:
           name: ieee-test-input
           path: ieee
 
+      - run: gem install gem-release
+
       - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: |
           git config --global user.name "metanorma-ci"
           git config --global user.email "metanorma-ci@users.noreply.github.com"
-          gem install gem-release
           gem bump --version ${{ inputs.next_version }} --tag --push
 
       - run: |
@@ -51,7 +52,7 @@ jobs:
         env:
           RUBYGEMS_API_KEY: ${{secrets.METANORMA_CI_RUBYGEMS_API_KEY}}
         run: |
-          gem install gem-release
+          mkdir -p ~/.gem
           touch ~/.gem/credentials
           cat > ~/.gem/credentials << EOF
           ---
