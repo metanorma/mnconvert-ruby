@@ -26,7 +26,7 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: '3.1'
           bundler-cache: true
 
       - uses: actions/download-artifact@v3
@@ -34,16 +34,18 @@ jobs:
           name: ieee-test-input
           path: ieee
 
-      - run: bundle exec rake
-
       - if: github.event_name == 'workflow_dispatch' && inputs.next_version != 'skip'
         run: |
+          git config --global user.name "metanorma-ci"
+          git config --global user.email "metanorma-ci@users.noreply.github.com"
           gem install gem-release
           gem bump --version ${{ inputs.next_version }} --tag --push
 
       - run: |
           rm -f bin/mnconvert.jar
           bundle exec rake bin/mnconvert.jar
+
+      - run: bundle exec rake
 
       - name: publish to rubygems.org
         env:

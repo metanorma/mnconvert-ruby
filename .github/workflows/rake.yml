@@ -42,6 +42,4 @@ jobs:
           name: ieee-test-input
           path: ieee
 
-      - run: ls -R ieee
-
       - run: bundle exec rake
