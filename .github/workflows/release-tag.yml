@@ -15,7 +15,7 @@ jobs:
     if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
     needs: [ prepare-ieee ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
 
