@@ -5,6 +5,9 @@ on:
     types: [ metanorma/mnconvert ]
 
 jobs:
+  prepare:
+    uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
+
   prepare-ieee:
     uses: ./.github/workflows/prepare.yml
     secrets:
@@ -13,11 +16,16 @@ jobs:
   tag_repo:
     runs-on: ubuntu-latest
     if: startsWith(github.event.client_payload.ref, 'refs/tags/v')
-    needs: [ prepare-ieee ]
+    needs: [ prepare, prepare-ieee ]
     steps:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ieee-test-input
+          path: ieee
 
       - run: |
           git config --global user.name "metanorma-ci"
@@ -29,23 +37,16 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
           bundler-cache: true
 
-      - run: gem install gem-release
-
-      - run: gem bump --version ${mnconvert_VERSION} --no-commit
-
-      - run: |
-          rm -f bin/mnconvert.jar
-          bundle exec rake bin/mnconvert.jar
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: ieee-test-input
-          path: ieee
+      - run: rm -f bin/mnconvert.jar
 
       - run: bundle exec rake
+
+      - run: |
+          gem install gem-release
+          gem bump --version ${mnconvert_VERSION} --no-commit
 
       - name: Push commit and tag
         run: |
@@ -53,3 +54,12 @@ jobs:
           git commit -m "Bump version to ${mnconvert_VERSION}"
           git tag v${mnconvert_VERSION}
           git push origin HEAD:${GITHUB_REF} --tags
+
+      - if: failure()
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.METANORMA_CI_PAT_TOKEN }}
+        with:
+          assignees: CAMOBAP
+          update_existing: true
+          search_existing: all
