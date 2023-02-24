@@ -40,13 +40,13 @@ jobs:
           ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
           bundler-cache: true
 
-      - run: rm -f bin/mnconvert.jar
-
-      - run: bundle exec rake
-
       - run: |
           gem install gem-release
           gem bump --version ${mnconvert_VERSION} --no-commit
+
+      - run: rm -f bin/mnconvert.jar
+
+      - run: bundle exec rake
 
       - name: Push commit and tag
         run: |
@@ -63,3 +63,4 @@ jobs:
           assignees: CAMOBAP
           update_existing: true
           search_existing: all
+          filename: .github/RELEASE_ISSUE_TEMPLATE.md
