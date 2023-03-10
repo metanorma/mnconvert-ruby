@@ -47,4 +47,4 @@ jobs:
           name: ieee-test-input
           path: |
             ieee/stl/standards-1-7-DTD/standards-1-7-dtd/
-            ieee/samples/site/documents/p987.6/document.xml
+            ieee/samples/_site/documents/p987.6/document.xml

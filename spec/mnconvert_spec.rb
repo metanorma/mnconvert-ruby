@@ -68,7 +68,7 @@ RSpec.describe MnConvert do
     root_path = File.join(File.dirname(__FILE__), "..")
     sts_path = Pathname.new(Dir.pwd) / "p987.6.xml"
 
-    input_xml = File.join(root_path, "ieee/samples/site/documents/p987.6/document.xml")
+    input_xml = File.join(root_path, "ieee/samples/_site/documents/p987.6/document.xml")
     validation_dtd = File.join(root_path, "ieee/stl/standards-1-7-DTD/standards-1-7-dtd/standards.dtd")
 
     MnConvert.convert(
