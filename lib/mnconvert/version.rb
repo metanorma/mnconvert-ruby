@@ -1,4 +1,4 @@
 module MnConvert
-  VERSION = "1.55.0"
+  VERSION = "1.56.0"
   MNCONVERT_JAR_VERSION = VERSION
 end
