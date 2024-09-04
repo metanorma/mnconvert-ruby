@@ -26,7 +26,7 @@ file "bin/mnconvert.jar" do |file|
 end
 
 file "spec/fixtures/rice-en.cd.mn.xml" do |file|
-  uri = "https://raw.githubusercontent.com/metanorma/mn-samples-iso/gh-pages/documents/international-standard/rice-en.cd.xml"
+  uri = "https://raw.githubusercontent.com/metanorma/mn-samples-iso/gh-pages/documents/international-standard/rice-2023/document-en.cd.xml"
 
   File.open(file.name, "w") do |saved_file|
     saved_file.write(uri_open(uri).read)
