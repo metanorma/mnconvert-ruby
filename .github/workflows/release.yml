@@ -55,7 +55,7 @@ jobs:
         run: |
           git add -u bin/mnconvert.jar lib/mnconvert/version.rb
           git commit -m "Bump version to ${{ inputs.next_version }}"
-          git tag v${mnconvert_VERSION}
+          git tag v${{ inputs.next_version }}
           git push origin HEAD:${GITHUB_REF} --tags
 
       - uses: actions-mn/gem-release@main
