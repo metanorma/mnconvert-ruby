@@ -36,7 +36,7 @@ jobs:
           ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
           bundler-cache: true
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: ieee-test-input
           path: ieee
