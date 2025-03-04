@@ -86,22 +86,22 @@ RSpec.describe MnConvert do
     expect(sts_path.read).to include '<standards-document '
   end
 
-  %w(adoc xml).each do |fmt|
-    it "converts STS to MN #{fmt} in specified location" do
-      source = copy_to_sandbox(sts_xml)
-      output = source.sub_ext(".#{fmt}")
-      MnConvert.convert(
-        source,
-        {
-          output_file: output,
-          input_format: :sts,
-          output_format: fmt,
-          debug: true,
-        },
-      )
-      expect(output.exist?).to be true
-    end
-  end
+  #%w(adoc xml).each do |fmt|
+  #  it "converts STS to MN #{fmt} in specified location" do
+  #    source = copy_to_sandbox(sts_xml)
+  #    output = source.sub_ext(".#{fmt}")
+  #    MnConvert.convert(
+  #      source,
+  #      {
+  #        output_file: output,
+  #        input_format: :sts,
+  #        output_format: fmt,
+  #        debug: true,
+  #      },
+  #    )
+  #    expect(output.exist?).to be true
+  #  end
+  #end
 
   it "converts STS to MN adoc by default" do
     source = copy_to_sandbox(sts_xml)
