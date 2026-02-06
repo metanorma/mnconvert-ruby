@@ -37,6 +37,12 @@ jobs:
           bundler-cache: true
           working-directory: ieee/samples
 
+      - run: |
+          gem install fontist
+          fontist --version
+          fontist update
+          fontist install "STIX Two Math"
+
       - uses: actions-mn/site-gen@v1
         with:
           source-path: ieee/samples
