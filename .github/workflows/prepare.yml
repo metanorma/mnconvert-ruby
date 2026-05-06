@@ -29,6 +29,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: metanorma/mn-samples-ieee
+          ref: test_lutaml
           path: ieee/samples
 
       - uses: ruby/setup-ruby@v1
@@ -42,8 +43,6 @@ jobs:
           fontist --version
           fontist update
           fontist install "STIX Two Math"
-
-      - run: gem install "lutaml-model" -v 0.7.7
 
       - uses: actions-mn/site-gen@v1
         with:
