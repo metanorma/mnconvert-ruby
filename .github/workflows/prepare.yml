@@ -43,7 +43,7 @@ jobs:
           fontist update
           fontist install "STIX Two Math"
 
-     - run: gem install "lutaml-model" -v 0.7.7
+      - run: gem install "lutaml-model" -v 0.7.7
 
       - uses: actions-mn/site-gen@v1
         with:
