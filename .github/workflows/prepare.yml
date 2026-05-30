@@ -29,7 +29,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: metanorma/mn-samples-ieee
-          ref: test_lutaml
           path: ieee/samples
 
       - uses: ruby/setup-ruby@v1
