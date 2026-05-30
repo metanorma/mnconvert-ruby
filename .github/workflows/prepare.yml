@@ -34,9 +34,11 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
+          ruby-version: 4.0
+          rubygems: latest
           bundler-cache: true
           working-directory: ieee/samples
+          #ruby-version: ${{ needs.prepare.outputs.default-ruby-version }}
 
       - run: |
           gem install fontist
