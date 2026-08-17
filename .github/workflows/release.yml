@@ -12,6 +12,10 @@ on:
         required: true
         default: 'skip'
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   prepare:
     uses: metanorma/ci/.github/workflows/prepare-rake.yml@main
@@ -58,7 +62,9 @@ jobs:
           git tag v${{ inputs.next_version }}
           git push origin HEAD:${GITHUB_REF} --tags
 
+      # Exchange the job's OIDC token (id-token: write) for a short-lived RubyGems API key.
+      - uses: rubygems/configure-rubygems-credentials@dc5a8d8553e6ee01fc26761a49e99e733d17954a # v2.1.0
       - uses: actions-mn/gem-release@main
         with:
-          api-key: ${{ secrets.METANORMA_CI_RUBYGEMS_API_KEY }}
+          bearer-token: ${{ env.RUBYGEMS_API_KEY }}
           release-command: gem release
