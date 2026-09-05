@@ -14,9 +14,9 @@ RSpec.describe MnConvert do
 
   it "raises Java 24+ XML entity size limits" do
     expect(MnConvert.jvm_options)
-      .to include("-Djdk.xml.maxGeneralEntitySizeLimit=10000000")
+      .to include("-Djdk.xml.maxGeneralEntitySizeLimit=0")
     expect(MnConvert.jvm_options)
-      .to include("-Djdk.xml.totalEntitySizeLimit=10000000")
+      .to include("-Djdk.xml.totalEntitySizeLimit=0")
   end
 
   it "converts XML to STS without specifying output" do

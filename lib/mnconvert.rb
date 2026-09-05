@@ -13,12 +13,12 @@ module MnConvert
 
   def self.jvm_options
     # Java 24+ caps XML entity size at 100000 by default, which large
-    # Metanorma documents exceed; raise the limits on the command line
+    # Metanorma documents exceed; set no limits on the command line
     # so users do not need JAVA_TOOL_OPTIONS (whose "Picked up ..." banner
     # breaks Jing callers: metanorma/metanorma-pdfa#98).
     options = ["-Xss5m", "-Xmx1024m",
-               "-Djdk.xml.maxGeneralEntitySizeLimit=10000000",
-               "-Djdk.xml.totalEntitySizeLimit=10000000"]
+               "-Djdk.xml.maxGeneralEntitySizeLimit=0",
+               "-Djdk.xml.totalEntitySizeLimit=0"]
 
     if RbConfig::CONFIG["host_os"].match?(/darwin|mac os/)
       options << "-Dapple.awt.UIElement=true"
