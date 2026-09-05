@@ -12,6 +12,13 @@ RSpec.describe MnConvert do
     expect(MnConvert.help).not_to be_empty
   end
 
+  it "raises Java 24+ XML entity size limits" do
+    expect(MnConvert.jvm_options)
+      .to include("-Djdk.xml.maxGeneralEntitySizeLimit=0")
+    expect(MnConvert.jvm_options)
+      .to include("-Djdk.xml.totalEntitySizeLimit=0")
+  end
+
   it "converts XML to STS without specifying output" do
     input = copy_to_sandbox(mn_xml)
     output = Pathname.new(Dir.pwd) / "rice-en.cd.mn.sts.niso.xml"
